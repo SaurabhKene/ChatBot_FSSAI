@@ -40,10 +40,41 @@ function ChatPopup({ isOpen, onClose }) {
           text: "Hello! Welcome to FSSAI! How can I assist you today?",
           sender: "Bot",
           time: getCurrentTime(),
+          buttons: [
+            { text: "General Query", action: "generalQuery" },
+            { text: "Track Application", action: "trackApplication" },
+          ],
         },
       ]);
     }
   }, [isOpen]);
+  const handleButtonClick = (action) => {
+    if (action === "generalQuery") {
+      setMessages((prev) => [
+        ...prev,
+        {
+          text: "You selected a General Query. Please write your query in the text box below.",
+          sender: "Bot",
+          time: getCurrentTime(),
+        },
+      ]);
+    } else if (action === "trackApplication") {
+      setMessages((prev) => [
+        ...prev,
+        {
+          text: "Please select one of the below options:",
+          sender: "Bot",
+          time: getCurrentTime(),
+          buttons: [
+            { text: "Track Application", action: "TA" },
+            { text: "Complaint Status", action: "Complaint Status" },
+            { text: "Know Your Officer", action: "Know Your Officer" },
+            { text: "FBO Search", action: " FBO Search" },
+          ],
+        },
+      ]);
+    }
+  };
 
   const handleSend = () => {
     if (input.trim()) {
@@ -102,7 +133,7 @@ function ChatPopup({ isOpen, onClose }) {
               {/* Sender's Image */}
               {message.sender !== "You" && (
                 <img
-                  src={botImg} // Replace with an image specific to the sender if needed
+                  src={botImg}
                   alt={`${message.sender} avatar`}
                   style={styles.avatar}
                 />
@@ -118,6 +149,20 @@ function ChatPopup({ isOpen, onClose }) {
               >
                 <span style={styles.text}>{message.text}</span>
                 <div style={styles.time}>{message.time}</div>
+
+                {message.buttons && (
+                  <div style={styles.buttonsContainer}>
+                    {message.buttons.map((button, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => handleButtonClick(button.action)}
+                        style={styles.button}
+                      >
+                        {button.text}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -131,7 +176,7 @@ function ChatPopup({ isOpen, onClose }) {
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && handleSend()}
           />
-          <button style={styles.button} onClick={handleSend}>
+          <button style={styles.buttonSend} onClick={handleSend}>
             Send
           </button>
         </div>
@@ -141,6 +186,10 @@ function ChatPopup({ isOpen, onClose }) {
 }
 
 const styles = {
+  buttonsContainer: {
+    //display: "flex",
+    flexwrap: "wrap",
+  },
   popupContainer: {
     position: "fixed",
     top: 0,
@@ -211,7 +260,7 @@ const styles = {
   chatBox: {
     flex: 1,
     overflowY: "auto",
-    backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.8)), url(${fssaiImage})`,
+    backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.63), rgba(255, 255, 255, 0.8)), url(${fssaiImage})`,
     backgroundSize: "cover",
     backgroundPosition: "center",
     backgroundRepeat: "no-repeat",
@@ -222,21 +271,21 @@ const styles = {
     msOverflowStyle: "none",
   },
   messageContainer: {
-    display: "flex", // Align items horizontally
-    alignItems: "flex-start", // Align items at the top
-    margin: "10px 10px", // Add spacing between messages
+    display: "flex",
+    alignItems: "flex-start",
+    margin: "10px 10px",
   },
   myMessageContainer: {
-    flexDirection: "row-reverse", // Reverse the direction for user messages
+    flexDirection: "row-reverse",
   },
   theirMessageContainer: {
-    flexDirection: "row", // Default direction for bot/receiver messages
+    flexDirection: "row",
   },
   avatar: {
     width: "40px",
     height: "50  px",
     borderRadius: "50%",
-    margin: "0 5px", // Space between the image and message content
+    margin: "0 5px",
   },
   message: {
     padding: "5px 10px",
@@ -248,10 +297,10 @@ const styles = {
   },
   myMessage: {
     backgroundColor: "#d1ffd6",
-    textAlign: "right",
+    textAlign: "left",
   },
   theirMessage: {
-    backgroundColor: "#f1f0f0",
+    backgroundColor: "#dddddd",
     textAlign: "left",
   },
   text: {
@@ -262,7 +311,6 @@ const styles = {
     fontSize: "0.6em",
     color: "#777",
     textAlign: "right",
-    marginTop: "5px",
   },
   inputContainer: {
     display: "flex",
@@ -275,13 +323,43 @@ const styles = {
     border: "1px solid #ccc",
     borderRadius: "5px",
   },
-  button: {
+  buttonSend: {
     padding: "10px 15px",
     border: "none",
     borderRadius: "5px",
     backgroundColor: "#ff5e04",
     color: "white",
     cursor: "pointer",
+  },
+  // button: {
+  //   padding: "10px 15px",
+  //   backgroundColor: "white",
+  //   border: "1px solid #ff5e04",
+  //   color: "black",
+  //   borderRadius: "5px",
+  //   cursor: "pointer",
+  //   fontSize: "11px" /* Set the font size to 9px */,
+  //   transition: "background-color 0.3s, color 0.3s" /* Smooth transition */,
+  // },
+  button: {
+    padding: "8px 14px",
+    backgroundColor: "white",
+    border: "2px solid #ff5e04",
+    color: "black",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontSize: "11px",
+    transition: "background-color 0.3s, color 0.3s",
+    whiteSpace: "nowrap" /* Allows text to wrap inside the button */,
+    maxwidth: "150px" /* Optional: Limit button width */,
+    wordWrap: "break-word" /* Ensure the text wraps inside the button */,
+    marginBottom: "10px",
+    margin: "5px",
+  },
+  buttonHover: {
+    backgroundColor:
+      "#ff5e04" /* On hover, background color matches the border */,
+    color: "white" /* Text color changes to white on hover */,
   },
 };
 
